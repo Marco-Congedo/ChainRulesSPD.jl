@@ -18,8 +18,8 @@ using ChainRulesSPD: _spfrEVD_batch
 
 Random.seed!(1234);
 
-rtol=1e-6 # set 1e-9 for local tests
-atol=1e-6 # set 1e-9 for local tests
+rtol=1e-8 
+atol=1e-8 
 
 include("test_loewner.jl")
 include("test_frechet.jl")
