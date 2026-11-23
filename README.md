@@ -2,8 +2,7 @@
 <p align="center">
   <img src="https://raw.githubusercontent.com/Marco-Congedo/ChainRulesSPD.jl/master/docs/src/assets/fig1.png"
        alt="header"
-       width="848"
-       style="max-width:848px; width:100%; height:auto;">
+       width="800">
 </p>
 
 
