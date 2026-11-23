@@ -3,10 +3,9 @@
   <img src="docs/src/assets/fig1.png" alt="header" width="848">
 </p>
 
----
 
 <a href="https://Marco-Congedo.github.io/ChainRulesSPD.jl/stable">
-  <img src="https://img.shields.io/badge/docs-stable-blue.svg" alt="Documentation: stable" width="100">
+  <img src="https://img.shields.io/badge/docs-stable-blue.svg" alt="Documentation: stable" width="161">
 </a>
 
 ---
@@ -46,4 +45,6 @@ Pkg.add("ChainRulesSPD")
 
 --- 
 
-[![](https://img.shields.io/badge/docs-stable-blue.svg)](https://Marco-Congedo.github.io/ChainRulesSPD.jl/stable)
+<a href="https://Marco-Congedo.github.io/ChainRulesSPD.jl/stable">
+  <img src="https://img.shields.io/badge/docs-stable-blue.svg" alt="Documentation: stable" width="161">
+</a>
