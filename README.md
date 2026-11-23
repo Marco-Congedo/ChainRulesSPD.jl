@@ -4,8 +4,8 @@
 </p>
 
 
-<a href="https://Marco-Congedo.github.io/ChainRulesSPD.jl/stable">
-  <img src="https://img.shields.io/badge/docs-stable-blue.svg" alt="Documentation: stable" width="161">
+<a href="https://Marco-Congedo.github.io/ChainRulesSPD.jl/dev">
+  <img src="https://img.shields.io/badge/docs-dev-blue.svg" alt="Documentation: stable" width="141">
 </a>
 
 ---
@@ -45,6 +45,7 @@ Pkg.add("ChainRulesSPD")
 
 --- 
 
-<a href="https://Marco-Congedo.github.io/ChainRulesSPD.jl/stable">
-  <img src="https://img.shields.io/badge/docs-stable-blue.svg" alt="Documentation: stable" width="161">
+<a href="https://Marco-Congedo.github.io/ChainRulesSPD.jl/dev">
+  <img src="https://img.shields.io/badge/docs-dev-blue.svg" alt="Documentation: stable" width="180">
 </a>
+
