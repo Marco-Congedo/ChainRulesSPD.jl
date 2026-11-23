@@ -1,10 +1,12 @@
 
-![header](docs/src/assets/fig1.png) 
+<p align="center">
+  <img src="docs/src/assets/fig1.png" alt="header" width="848">
+</p>
 
 ---
 
 <a href="https://Marco-Congedo.github.io/ChainRulesSPD.jl/stable">
-  <img src="https://img.shields.io/badge/docs-stable-blue.svg" alt="Documentation: stable" width="848">
+  <img src="https://img.shields.io/badge/docs-stable-blue.svg" alt="Documentation: stable" width="100">
 </a>
 
 ---
