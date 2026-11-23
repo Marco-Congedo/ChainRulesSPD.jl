@@ -64,6 +64,8 @@ skew(X) = (X - X') * (one(eltype(X))/2) # (X - X') / 2
 # regardless whether X is a Matrix, Symmetric or Hermitian julia type. 
 # Thus, we avoid errors due to possible type instabilities or errors in coding.
 # Two methods are given, arranging the different types of the X.
+# for Matrix input, the gradient with respect to the entries read (upper triangle doubled, lower zeroed); 
+# for Symmetric/Hermitian, the symmetric Frobenius gradient with no doubling.
 function desym!(::AbstractMatrix, ΔX::Matrix{T}) where {T<:AbstractFloat}
     n = size(ΔX,1)
     z = zero(T)
@@ -76,17 +78,12 @@ function desym!(::AbstractMatrix, ΔX::Matrix{T}) where {T<:AbstractFloat}
     return ΔX
 end
 
-function desym!(::Union{LinearAlgebra.Symmetric, LinearAlgebra.Hermitian}, ΔX::Matrix{T}) where {T<:AbstractFloat}
-    n = size(ΔX,1)
-    t = T(2)
-
-    @inbounds for j in 1:n, i in 1:j-1
-        ΔX[i,j] *= t
-        ΔX[j,i] *= t
-    end
+# Symmetric/Hermitian input: the tangent lives in the space of symmetric matrices
+# (Frobenius inner product), and ΔX is already symmetric, so nothing to double.
+function desym!(::Union{LinearAlgebra.Symmetric, LinearAlgebra.Hermitian},
+                ΔX::Matrix{T}) where {T<:AbstractFloat}
     return ΔX
 end
-
 
 @inline _drop_last_tangent(pb) = Ȳ -> Base.front(pb(Ȳ))
 
