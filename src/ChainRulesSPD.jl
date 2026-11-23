@@ -62,7 +62,7 @@ parallel_transportr
 
 include("tools.jl")
 include("pFunctions.jl")
-include("Loewner.jl")
+include("loewner.jl")
 include("frechet.jl")
 
 include("fw_EVD.jl")
