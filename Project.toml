@@ -1,0 +1,28 @@
+name = "ChainRulesSPD"
+uuid = "fb0ee57b-fa25-4d30-902f-ab413cb78245"
+version = "0.1.0"
+authors = ["Marco Congedo <marco.congedo@gmail.com>"]
+
+[deps]
+ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
+ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+
+[compat]
+ChainRulesCore = "1.26.1"
+ForwardDiff = "1.4.6"
+LinearAlgebra = "1.13.0"
+Zygote = "0.7.13"
+
+[extras]
+ChainRulesCore = "d360d2e6-b24c-11e9-a2a3-2a2ae2dbcce4"
+ChainRulesTestUtils = "cdddcdb0-9152-4a09-a978-84456f9df70a"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
+PosDefManifold = "f45a3650-5c51-11e9-1e9a-133aa5e309cf"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+Zygote = "e88e6eb3-aa80-5325-afca-941959d7151f"
+ForwardDiff = "f6369f11-7733-5829-9624-2563aa707210"
+
+[targets]
+test = ["LinearAlgebra", "PosDefManifold", "ChainRulesCore", "ChainRulesTestUtils", "Zygote", "ForwardDiff", "Test", "Random"]

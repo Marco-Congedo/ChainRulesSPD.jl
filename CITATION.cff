@@ -1,0 +1,38 @@
+cff-version: "1.2.0"
+authors:
+  - family-names: Congedo
+    given-names: Marco
+    orcid: "https://orcid.org/0000-0003-2196-0409"
+  - family-names: Bhatia
+    given-names: Rajendra
+    orcid: 
+  - family-names: Bouchard
+    given-names: Florent
+    orcid: "https://orcid.org/0000-0003-3003-7317"
+doi: 
+message: If you use this software, please cite our article in Transactions
+  on Machine Learning Research.
+preferred-citation:
+  authors:
+  - family-names: Congedo
+    given-names: Marco
+    orcid: "https://orcid.org/0000-0003-2196-0409"
+  - family-names: Bhatia
+    given-names: Rajendra
+    orcid: 
+  - family-names: Bouchard
+    given-names: Florent
+    orcid: "https://orcid.org/0000-0003-3003-7317"
+  date-published: 
+  doi: 10.21105/joss.10388
+  issn: 
+  issue: 
+  journal: Transactions on Machine Learning Research
+  publisher:
+    name: Journal of Machine Learning Research Inc. (JMLR Inc.), United States.
+  start: 
+  title: "A new look at the Riemannian manifold of positive definite matrices"
+  type: article
+  url: 
+  volume: 
+title: "A new look at the Riemannian manifold of positive definite matrices"
