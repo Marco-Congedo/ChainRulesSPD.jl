@@ -101,13 +101,7 @@ function _phir_pullback_batch(
 
         @inbounds for b in axes(P,3) # it can be multi-threaded
 
-            Pb = @view P[:,:,b]
-            Qb = @view Q[:,:,b]
-
             ΔPb, ΔQb, _ = _phir_slice(As[b], Bs[b], Λs[b], fλs[b], Ks[b], @view(Ȳ[:,:,b]))
-
-            desym!(Pb, ΔPb)
-            desym!(Qb, ΔQb)
 
             @views ΔP[:,:,b] .= ΔPb
             @views ΔQ[:,:,b] .= ΔQb
@@ -211,9 +205,6 @@ function ChainRulesCore.rrule(::typeof(geodesicr_t),
 
         @inbounds for b in axes(P,3) # it can be multi-threaded
 
-            Pb = @view P[:,:,b]
-            Qb = @view Q[:,:,b]
-
             λ  = Λs[b]
             fλ = fλs[b]
 
@@ -221,9 +212,6 @@ function ChainRulesCore.rrule(::typeof(geodesicr_t),
 
             # d/dt A' Λ^t A = A' Λ^t log(Λ) A  =>  Δt = Σ_i G_ii λ_i^t log(λ_i)
             Δt += dot(diag(G), fλ .* log.(λ))
-
-            desym!(Pb, ΔPb)
-            desym!(Qb, ΔQb)
 
             @views ΔP[:,:,b] .= ΔPb
             @views ΔQ[:,:,b] .= ΔQb
@@ -359,13 +347,7 @@ function _psir_pullback_batch(
 
         @inbounds for b in axes(P,3) # it can be multi-threaded
 
-            Pb = @view P[:,:,b]
-            Qb = @view Q[:,:,b]
-
             ΔPb, ΔQb = _psir_slice(As[b], Bs[b], Λs[b], fλs[b], Ks[b], @view(Ȳ[:,:,b]))
-
-            desym!(Pb, ΔPb)
-            desym!(Qb, ΔQb)
 
             @views ΔP[:,:,b] .= ΔPb
             @views ΔQ[:,:,b] .= ΔQb

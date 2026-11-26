@@ -31,7 +31,7 @@ function _spfr_pullback_batch(
         ΔX = similar(X)
 
         @inbounds for b in axes(X,3)
-            Δ = _spfr_frechet(@view(X[:,:,b]), Vs[b], Λs[b], @view(Ȳ[:,:,b]), f; f′=f′)
+            Δ = _spfr_frechet(Vs[b], Λs[b], @view(Ȳ[:,:,b]), f; f′=f′)
             @views ΔX[:,:,b] .= Δ
         end
 
@@ -110,7 +110,7 @@ function ChainRulesCore.rrule(::typeof(logr_relu),
         ϵ::T
     ) where {T<:AbstractFloat}
 
-    Y, pb = ChainRulesCore.rrule(spfr, X, Log_ReLU(ϵ); f′ = Log_ReLU′(ϵ))
+    Y, pb = ChainRulesCore.rrule(spfr, X, LogReLU(ϵ); f′ = LogReLU′(ϵ))
 
     function pullback(Ȳ)
         _, ΔX, _ = pb(Ȳ)
@@ -174,13 +174,12 @@ function ChainRulesCore.rrule(::typeof(powerr_t),
 
         @inbounds for b in axes(X,3)
 
-            Xb  = @view X[:,:,b]
             Ȳb  = @view Ȳ[:,:,b]
 
             λ = Λs[b]
             V = Vs[b]
 
-            @views ΔX[:,:,b] .= _spfr_frechet(Xb, V, λ, Ȳb, f; f′=f′)
+            @views ΔX[:,:,b] .= _spfr_frechet(V, λ, Ȳb, f; f′=f′)
 
             #G = V' * Symmetric((Ȳb + Ȳb') / T(2)) * V
             #G = V' * sym(Ȳb) * V # to do : compute quadratic forms only

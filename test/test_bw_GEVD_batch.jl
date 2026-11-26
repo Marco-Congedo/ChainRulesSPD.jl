@@ -99,15 +99,8 @@ end;
 #      t = 0 :  P (P⁻¹Q)⁰ = P   =>  ΔP = Ȳ,   ΔQ = 0
 # ------------------------------------------------------------------
 
-# Gradient convention for plain-Matrix inputs (see desym!): the GEVD reads only the upper triangle,
-# so the gradient is upper triangular with doubled off-diagonal entries.
-function upper_conv(X)
-    Y = zero(X)
-    for b in axes(X, 3), j in axes(X, 2), i in 1:j
-        Y[i, j, b] = i == j ? X[i, j, b] : 2X[i, j, b]
-    end
-    return Y
-end
+# Plain-Matrix inputs are symmetrized in the forward pass, so the gradient is the
+# symmetric Frobenius one (same convention as the EVD wrappers).
 
 @testset "geodesicr: closed-form gradients at t = 1 and t = 0" begin
 
@@ -119,13 +112,13 @@ end
     _, ΔP, ΔQ, _ = pb(Ȳ)
     @test Y ≈ Qbatch
     @test norm(ΔP) ≤ tol
-    @test ΔQ ≈ upper_conv(Ȳ)
+    @test ΔQ ≈ Ȳ
 
     t = 0.0
     Y, pb = ChainRulesCore.rrule(geodesicr, Pbatch, Qbatch, t)
     _, ΔP, ΔQ, _ = pb(Ȳ)
     @test Y ≈ Pbatch
-    @test ΔP ≈ upper_conv(Ȳ)
+    @test ΔP ≈ Ȳ
     @test norm(ΔQ) ≤ tol
 end;
 

@@ -25,15 +25,15 @@ println("\nTesting fw_GEVD.jl...")
 
 for n in (4, 6)
 
-    P = randP(n);
-    Q = randP(n);
+    global P = randP(n);
+    global Q = randP(n);
 
     # Dense matrices
     Pm = Matrix(P);
     Qm = Matrix(Q);
 
     # Symmetric tangent vectors
-    S = randn(n, n);
+    global S = randn(n, n);
     S = Symmetric((S + S') / 2);
     Sm = Matrix(S);
 

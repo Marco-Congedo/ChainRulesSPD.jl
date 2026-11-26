@@ -7,15 +7,12 @@
 
 Two kinds of primal functions are implemented:
 - functions based on the *eigendecomposition* (EVD) of each matrix input ``P \in \mathcal{S}_{++}``, such as ``\mathrm{Log}(P)``, ``P^t``, etc.
-- functions based on the *generalized eigendecomposition* (GEVD) of an input matrix pair ``P \in \mathcal{S}_{++}``, ``X \in \mathcal{S}``, such as the geometric mean the geodesic, the logarithmic map, etc.
+- functions based on the *generalized eigendecomposition* (GEVD) of an input matrix pair ``P \in \mathcal{S}_{++}``, ``X \in \mathcal{S}``, such as the geometric mean, the geodesic, the logarithmic map, etc.
 
-For all details, see:
-
-Congedo M. Bouchard F. and Bhatia R. (2026) A new look at the Riemannian manifold of positive definite matrices,
-*Transactions on Machine Learning research*.
+For all details, see the accompanying [paper](@ref reference).
 
 !!! tip
-    All pullback functions for beckpropagation are **non-mutating**, thus they can be used in [Zygote.jl](https://github.com/fluxml/zygote.jl).
+    All functions are **non-mutating**, thus they can be used in [Zygote.jl](https://github.com/fluxml/zygote.jl).
 
 ## EVD-based functions
 
@@ -23,7 +20,7 @@ All EVD-based functions are instances of
 
 `` f(P) ``, 
 
-where ``P \in \mathcal{S}_{++}`` and ``f`` is a function defined on the spectrum of ``P``. The generic method is [`spfr`](@ref). 
+where ``P \in \mathcal{S}_{++}`` and ``f`` is a function defined on the spectrum of ``P``. The generic method is [`spfr`](@ref) (short for *spectral function*). 
 
 Wrappers are available for the most common functions:
 
@@ -63,4 +60,4 @@ and ``m`` is the number of slices in the tensors.
 ## Pre-Conditioning
 
 For all GEVD-based methods, a keyword argument `precond` is available. This allows to reduce the 
-condition number of matrix ``P``. For details, see the last paragraph of Appendix E.2 of the paper xxx.
+condition number of matrix ``P``. For details, see the last paragraph of Appendix E.2 of the accompanying [paper](@ref reference).

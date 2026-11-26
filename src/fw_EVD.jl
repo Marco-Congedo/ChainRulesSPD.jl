@@ -17,9 +17,15 @@ Return 2-tuple ``(λ, U)``, with ``λ`` the eigenvalues and ``U`` the eigenvecto
 
 The elemets of `X` must be floating-point numbers.
 
-`Symmetric(X)` is passed to the standard julia `eigen` method, thus `X` can also be of type `Matrix`.
+`Symmetric(X)` is passed to the standard julia `eigen` method, thus `X` can also be of type `Matrix`
+(a plain `Matrix` is first symmetrized as `Hermitian((X+X')/2)`; `Symmetric` and `Hermitian` inputs are used unchanged).
 =#
-@inline eigenr(X::AbstractMatrix{T}; ϵ::T=sqrt(eps(T))) where {T<:AbstractFloat} = eigen(Symmetric(X)) 
+@inline function eigenr(X::AbstractMatrix{T}; ϵ::T=sqrt(eps(T))) where {T<:AbstractFloat}
+    # Symmetric/Hermitian inputs are used as-is; a plain Matrix is symmetrized
+    # so the result (and the gradient) depends on both triangles of X.
+    Xs = X isa SymOrHerm ? X : Hermitian((X + X') / T(2))
+    return eigen(Xs)
+end
 
 
 """ 
@@ -152,7 +158,7 @@ logr(X::AbstractMatrix{<:AbstractFloat}) = spfr(X, Log(); f′=Log′())
 ```julia
 logr_relu(P, ϵ)
 ```
-Symmetric matrix logarithm with ReLU activation. Equivalent to calling [`spfr`](@ref) with the [Log_ReLU](@ref "Parametric and non-parametric functors") function.
+Symmetric matrix logarithm with ReLU activation. Equivalent to calling [`spfr`](@ref) with the [LogReLU](@ref "Parametric and non-parametric functors") function.
 
 ``ϵ`` is the activation threshold. It must be a floating-point number.
 
@@ -160,7 +166,7 @@ Symmetric matrix logarithm with ReLU activation. Equivalent to calling [`spfr`](
 
 Use `logr_relu` instead of `relur` in the examples of [`relur`](@ref).
 """
-logr_relu(X::AbstractMatrix{T}, ϵ::T) where {T<:AbstractFloat} = spfr(X, Log_ReLU(ϵ); f′=Log_ReLU′(ϵ))
+logr_relu(X::AbstractMatrix{T}, ϵ::T) where {T<:AbstractFloat} = spfr(X, LogReLU(ϵ); f′=LogReLU′(ϵ))
 
 
 """ 

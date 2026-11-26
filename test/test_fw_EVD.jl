@@ -80,7 +80,7 @@ end;
     @test logr(Xm) ≈ spfr(Xm, Log()) ≈ log(Symmetric(Xm))
 
     ϵ = sqrt(eps(Float64))
-    @test logr_relu(Xm, ϵ) ≈ spfr(Xm, Log_ReLU(ϵ))
+    @test logr_relu(Xm, ϵ) ≈ spfr(Xm, LogReLU(ϵ))
 
     @test expr(Xm) ≈ spfr(Xm, Exp()) ≈ exp(Symmetric(Xm))
 

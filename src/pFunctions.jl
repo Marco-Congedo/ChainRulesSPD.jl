@@ -35,17 +35,17 @@ derivative(f::Log) = Log′()
 
 
 # Natural log + ReLU
-struct Log_ReLU{T<:Real} <: Function
+struct LogReLU{T<:Real} <: Function
     ϵ::T
 end
-(f::Log_ReLU)(x::Real) = log(max(x, f.ϵ)) # no need of log1p as ir is > ϵ
+(f::LogReLU)(x::Real) = log(max(x, f.ϵ)) # no need of log1p as ir is > ϵ
 
-struct Log_ReLU′{T<:Real} <: Function
+struct LogReLU′{T<:Real} <: Function
     ϵ::T
 end
-(f::Log_ReLU′)(x::Real) = x > f.ϵ ? inv(x) : zero(x)
+(f::LogReLU′)(x::Real) = x > f.ϵ ? inv(x) : zero(x)
 
-derivative(f::Log_ReLU) = Log_ReLU′(f.ϵ)
+derivative(f::LogReLU) = LogReLU′(f.ϵ)
 
 # 
 
