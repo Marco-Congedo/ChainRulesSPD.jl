@@ -107,7 +107,7 @@ logr(X::AbstractArray{<:AbstractFloat,3}) =
 Batched symmetric matrix log with ReLU activation
 =#    
 logr_relu(X::AbstractArray{T,3}, ϵ::T) where {T<:AbstractFloat} =
-    spfr(X, Log_ReLU(ϵ); f′=Log_ReLU′(ϵ))
+    spfr(X, LogReLU(ϵ); f′=LogReLU′(ϵ))
 
 #=
 Batched symmetric matrix exp

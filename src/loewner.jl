@@ -100,7 +100,7 @@ If ``f'`` is not provided and ``f`` is one of these functors `{Exp(), Sqrt(), Lo
 the derivative ``f'`` is assigned automatically,
 otherwise it is computed using [ForwardDiff.jl](https://github.com/JuliaDiff/ForwardDiff.jl).
 
-For the special functors above, precise computations are carried-out. See the Appendix E.1 in paper xxx for details.
+For the special functors above, precise computations are carried-out. See the Appendix E.1 in the [paper](@ref reference) for details.
 
 For the others, the usual cut-off ``\\epsilon``, given by optional keyword argument `epsilon`, is used:
 

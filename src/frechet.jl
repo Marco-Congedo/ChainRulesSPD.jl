@@ -11,7 +11,7 @@ frechet(U, K, E) = sym(U * (K .* (U' * sym(E) * U)) * U')
 
 
 #=
-    _spfr_frechet(X, V, λ, Ȳ, f; f′=nothing)
+    _spfr_frechet(V, λ, Ȳ, f; f′=nothing)
 
 Compute the Fréchet derivative of a spectral function.
 
@@ -20,7 +20,6 @@ EVD-based spectral functions.
 
 Arguments
 ---------
-X  : primal SPD matrix
 V  : eigenvectors of X
 λ  : eigenvalues of X
 Ȳ  : upstream cotangent
@@ -29,10 +28,9 @@ f′ : optional derivative of f (if not provided, it will be computed by Zygote)
 
 Returns
 -------
-ΔX : cotangent with respect to X.
+ΔX : cotangent with respect to X (a symmetric matrix).
 =#
 function _spfr_frechet(
-    X::AbstractMatrix{T},
     V::AbstractMatrix{T},
     λ::AbstractVector{T},
     Ȳ,
@@ -41,8 +39,5 @@ function _spfr_frechet(
 ) where {T<:AbstractFloat}
 
     K = loewner(λ, f; f′)
-    ΔX = frechet(V, K, ChainRulesCore.unthunk(Ȳ))
-    desym!(X, ΔX)
-
-    return ΔX
+    return frechet(V, K, ChainRulesCore.unthunk(Ȳ))
 end

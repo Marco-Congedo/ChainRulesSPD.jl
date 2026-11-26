@@ -13,7 +13,7 @@
 # ========================================================================================================
 
 #=
-    _spfr_pullback(X, V, λ, f, Ȳ; f′ = nothing)
+    _spfr_pullback(V, λ, f, Ȳ; f′ = nothing)
 
 Common pullback for EVD-based spectral functions
 
@@ -23,7 +23,6 @@ Computes the cotangent ΔX given the upstream sensitivity Ȳ.
 
 Arguments
 ---------
-X  : original SPD matrix (only used by desym!)
 V  : eigenvectors
 λ  : eigenvalues
 f  : scalar spectral function
@@ -35,7 +34,6 @@ Returns
 ΔX
 =#
 function _spfr_pullback(
-        X, 
         V, 
         λ, 
         f::Function; 
@@ -45,7 +43,7 @@ function _spfr_pullback(
 
     function pullback(Ȳ)
 
-        ΔX = _spfr_frechet(X, V, λ, Ȳ, f; f′)
+        ΔX = _spfr_frechet(V, λ, Ȳ, f; f′)
 
         return NoTangent(), ΔX
     end
@@ -78,7 +76,7 @@ function ChainRulesCore.rrule(::typeof(spfr),
     ) where {T<:AbstractFloat}
 
     λ, V, Y = _spfrEVD(X, f; ϵ)
-    pullback = _spfr_pullback(X, V, λ, f; f′)
+    pullback = _spfr_pullback(V, λ, f; f′)
 
     function pullback_spfr(Ȳ)
         _, ΔX = pullback(Ȳ)
@@ -103,7 +101,7 @@ function ChainRulesCore.rrule(::typeof(relur),
 
     f = ReLU(ϵ)
     λ, V, Y = _spfrEVD(X, f)
-    pullback = _spfr_pullback(X, V, λ, f; f′ = derivative(f))
+    pullback = _spfr_pullback(V, λ, f; f′ = derivative(f))
 
     function pullback_relur(Ȳ)
 
@@ -124,7 +122,7 @@ function ChainRulesCore.rrule(::typeof(logr),
 
     f = Log()
     λ, V, Y = _spfrEVD(X, f)
-    pullback = _spfr_pullback(X, V, λ, f; f′=derivative(f))
+    pullback = _spfr_pullback(V, λ, f; f′=derivative(f))
 
     return Y, pullback
 end
@@ -137,9 +135,9 @@ function ChainRulesCore.rrule(::typeof(logr_relu),
         X::AbstractMatrix{T}, ϵ::T
     ) where {T<:AbstractFloat}
 
-    f = Log_ReLU(ϵ)
+    f = LogReLU(ϵ)
     λ, V, Y = _spfrEVD(X, f)
-    pullback = _spfr_pullback(X, V, λ, f; f′ = derivative(f))
+    pullback = _spfr_pullback(V, λ, f; f′ = derivative(f))
 
     function pullback_relur(Ȳ)
 
@@ -160,7 +158,7 @@ function ChainRulesCore.rrule(::typeof(expr),
     
     f = Exp()
     λ, V, Y = _spfrEVD(X, f)
-    pullback = _spfr_pullback(X, V, λ, f; f′=derivative(f))
+    pullback = _spfr_pullback(V, λ, f; f′=derivative(f))
 
     return Y, pullback
 end
@@ -175,7 +173,7 @@ function ChainRulesCore.rrule(::typeof(sqrtr),
     
     f = Sqrt()
     λ, V, Y = _spfrEVD(X, f)
-    pullback = _spfr_pullback(X, V, λ, f; f′=derivative(f))
+    pullback = _spfr_pullback(V, λ, f; f′=derivative(f))
 
     return Y, pullback
 end
@@ -190,7 +188,7 @@ function ChainRulesCore.rrule(::typeof(invsqrtr),
     
     f = Invsqrt()
     λ, V, Y = _spfrEVD(X, f)
-    pullback = _spfr_pullback(X, V, λ, f; f′=derivative(f))
+    pullback = _spfr_pullback(V, λ, f; f′=derivative(f))
 
     return Y, pullback
 end
@@ -209,7 +207,7 @@ function ChainRulesCore.rrule(::typeof(powerr),
     λ, V, Y = _spfrEVD(X, f)
 
     function pullback(Ȳ)
-        ΔX = _spfr_frechet(X, V, λ, Ȳ, f; f′=derivative(f))
+        ΔX = _spfr_frechet(V, λ, Ȳ, f; f′=derivative(f))
         return NoTangent(), ΔX, NoTangent()
     end
 
@@ -240,9 +238,9 @@ function ChainRulesCore.rrule(::typeof(powerr_t),
         K = loewner(λ, f; f′=derivative(f))
         M = K .* G
 
-        # Fréchet derivative
-        ΔX = sym(V * M * V') # 
-        desym!(X, ΔX)
+        # Fréchet derivative (returned already symmetric; the forward pass
+        # symmetrizes plain Matrix inputs, so no doubling/zeroing is needed)
+        ΔX = sym(V * M * V')
 
         # derivative with respect to exponent p
         

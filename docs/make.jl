@@ -16,11 +16,12 @@ makedocs(;
    authors="Marco Congedo and Contributors",
    format = Documenter.HTML(; prettyurls = CI,),
    modules = [ChainRulesSPD],
-   # remotes = nothing, # ELIMINATE for deploying  ! ! ! ! ! ! ! ! ! ! !
+   #remotes = nothing, # ELIMINATE for deploying  ! ! ! ! ! ! ! ! ! ! !
  pages = [
         "index.md",
         "⛓️ ChainRulesSPD" => "ChainRulesSPD.md",
         "🗄️ API" => "API.md", 
+        "💡 Examples" => "Examples.md",
     ]
 )
 

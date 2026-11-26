@@ -15,7 +15,7 @@ For all of them, `derivative(f)` returns the corresponding derivative functor. I
 |----------|------------|-------------|---------|------------|
 | ReLU | ``\max(x, \epsilon)`` | ``\begin{cases} 1 & x > \epsilon \\ 0 & x \leq \epsilon \end{cases}`` | ReLU(ϵ) | ReLU′(ϵ) |
 | log | ``\ln(x)`` | ``\frac{1}{x}`` | Log() | Log′() |
-| log-ReLU | ``\ln(\max(x, \epsilon))`` | ``\begin{cases} \frac{1}{x} & x > \epsilon \\ 0 & x \leq \epsilon \end{cases}`` | Log_ReLU(ϵ) | Log_ReLU′(ϵ) |
+| log-ReLU | ``\ln(\max(x, \epsilon))`` | ``\begin{cases} \frac{1}{x} & x > \epsilon \\ 0 & x \leq \epsilon \end{cases}`` | LogReLU(ϵ) | LogReLU′(ϵ) |
 | exp | ``e^x`` | ``e^x`` | Exp() | Exp′() |
 | sqrt | ``\sqrt{x}`` | ``\frac{1}{2\sqrt{x}}`` | Sqrt() | Sqrt′() |
 | 1/sqrt | ``\frac{1}{\sqrt{x}} = x^{-1/2}`` | ``-\frac{1}{2x^{3/2}}`` | Invsqrt() | Invsqrt′() |
@@ -65,7 +65,7 @@ For all of them, `derivative(f)` returns the corresponding derivative functor. I
 
     ``(K_{f,\lambda})_{ij}=\left \{ \begin{array}{rl}\displaystyle\frac{f(\lambda_i)-f(\lambda_j)}{\lambda_i-\lambda_j}, & \lambda_i\neq \lambda_j\\[0.5ex]f'(\lambda_i), & \lambda_i=\lambda_j\end{array} \right.``.
 
-The Löwner matrix is used in all backpropagation rules. The Fréchet derivative is used for the pullback in all EVD-based functions. For GEVD-based functions, see the pullback functions in the paper xxx.
+The Löwner matrix is used in all backpropagation rules. The Fréchet derivative is used for the pullback in all EVD-based functions. For GEVD-based functions, see the pullback functions in the [paper](@ref reference).
 
 
 ```@docs

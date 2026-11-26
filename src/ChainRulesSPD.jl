@@ -16,7 +16,7 @@ skew,
 derivative,
 ReLU, ReLU′,
 Log, Log′,
-Log_ReLU, Log′_ReLU,
+LogReLU, LogReLU′,
 Exp, Exp′,
 Sqrt, Sqrt′,
 Invsqrt, Invsqrt′,
@@ -43,9 +43,6 @@ sqrtr,
 invsqrtr,
 powerr,
 powerr_t,
-
-# from bw_EVD.jl, bw_EVD_batch.jl, bw_GEVD.jl, bw_GEVD_batch.jl
-rrule,
 
 # from fw_GEVD.jl, fw_GEVD_batch.jl
 gevdr,

@@ -8,7 +8,6 @@
 # ========================================================================================================
 
 
-
 # ==========================================================================================
 # Common forward + pullback for the single-matrix ϕ wrappers
 # (same math as the rrule of `phir`; `f` and `f′` are provided by each wrapper).
@@ -41,9 +40,6 @@ function _phir_rrule(
         ΔQ = sym(B * H * B')                             # ∂ℓ/∂Q
         ΔP = sym(B * sym(J .* fλ' - H .* λ') * B')       # ∂ℓ/∂P
 
-        desym!(P, ΔP)
-        desym!(Q, ΔQ)
-
         return (NoTangent(), ΔP::Matrix{T}, ΔQ::Matrix{T}, NoTangent())
     end
 
@@ -64,16 +60,13 @@ function _phir_rrule(
     fλ = f.(λ)
     Y  = sym(A' * Diagonal(fλ) * A)     # primal ϕ(f,P,Q) = A' f(Λ) A
     K  = loewner(λ, f; f′)              # Löwner matrix, cached for the pullback
-    Z = @. T(0.5) * ((fλ + fλ') - (λ + λ') * K)   # build in the forward pass a,d cached, O(n²)
+    Z = @. T(0.5) * ((fλ + fλ') - (λ + λ') * K)   # build in the forward pass and cached, O(n²)
 
     function pullback(Ȳ)
 
         J  = sym(A * unthunk(Ȳ) * A')       # sym needed: Z-form assumes symmetric J
         ΔQ = sym(B * (K .* J) * B')         # ∂ℓ/∂Q = B(K⊙J)Bᵀ
         ΔP = sym(B * (Z .* J) * B')         # ∂ℓ/∂P = B(Z⊙J)Bᵀ
-
-        desym!(P, ΔP)
-        desym!(Q, ΔQ)
 
         return (NoTangent(), ΔP::Matrix{T}, ΔQ::Matrix{T}, NoTangent())
     end
@@ -209,9 +202,6 @@ function ChainRulesCore.rrule(::typeof(geodesicr_t),
         ΔP = sym(B * sym(J .* fλ' - H .* λ') * B')
         Δt = dot(diag(J), fλ .* log.(λ))
 
-        desym!(P, ΔP)
-        desym!(Q, ΔQ)
-
         return (NoTangent(), ΔP, ΔQ, Δt)
     end
 
@@ -268,9 +258,6 @@ function ChainRulesCore.rrule(::typeof(expmapr_stable),
         H  = K .* J
         ΔΞ = sym(B * H * B')
         ΔP = sym(B * sym(J .* fλ' - H .* λ') * B')
-
-        desym!(P, ΔP)
-        desym!(Ξ, ΔΞ)
 
         return (NoTangent(), ΔP::Matrix{T}, ΔΞ::Matrix{T})
     end
@@ -332,8 +319,6 @@ function ChainRulesCore.rrule(::typeof(psir),
     function pullback(Ȳ)
 
         ΔP, ΔQ = _psir_pullback(A, B, λ, fλ, K, Ȳ)
-        desym!(P, ΔP)
-        desym!(Q, ΔQ)
 
         return (NoTangent(), ΔP::Matrix{T}, ΔQ::Matrix{T}, NoTangent())
     end
@@ -374,10 +359,6 @@ function ChainRulesCore.rrule(::typeof(parallel_transportr),
         Ē = S * E * (X̄ + X̄')
 
         ΔP, ΔQ = _psir_pullback(A, B, λ, fλ, K, Ē)
-
-        !(S isa Matrix) && desym!(S, ΔS) # call desym! only if S is Symmetric or Hermitian
-        desym!(P, ΔP)
-        desym!(Q, ΔQ)
 
         return (NoTangent(), ΔP::Matrix{T}, ΔQ::Matrix{T}, ΔS::Matrix{T})
     end

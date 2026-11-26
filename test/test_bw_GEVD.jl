@@ -107,3 +107,57 @@ ChainRulesTestUtils.test_rrule(parallel_transportr, P, Matrix(Q), Matrix(S)); # 
 ChainRulesTestUtils.test_rrule(parallel_transportr, Matrix(P), Q, S); # mixed type
 ChainRulesTestUtils.test_rrule(parallel_transportr, P, Matrix(Q), S); # mixed type
 ChainRulesTestUtils.test_rrule(parallel_transportr, P, Q, Matrix(S)); # mixed type
+
+
+# -------------------------------------------------------------------------------------------------------
+# Gradients of phir and psir through an AD engine (Zygote), as used inside a neural network layer.
+#
+# The forward pass symmetrizes plain Matrix inputs (Hermitian((X+X')/2)), so the gradient is
+# the symmetric Frobenius one for Matrix, Symmetric and Hermitian inputs alike, and does not
+# depend on the wrapping type (same convention as the EVD wrappers).
+# -------------------------------------------------------------------------------------------------------
+
+@testset "phir/psir gradients through Zygote" begin
+
+    f  = Sqrt()
+    f′ = Sqrt′()
+    ℓ(A) = sum(abs2, A)
+
+    for (name, fn) in (("phir", phir), ("psir", psir))
+        @testset "$name" begin
+
+            lossfn = (P, Q) -> ℓ(fn(P, Q, f; f′ = f′))
+
+            # gradients are symmetric for every input type, and independent of the wrapper type:
+            # plain-Matrix gradients equal the wrapped-input (Frobenius) ones
+            gPH, gQH = Zygote.gradient(lossfn, P, Q)
+            @test Matrix(gPH) ≈ Matrix(gPH)'
+            @test Matrix(gQH) ≈ Matrix(gQH)'
+
+            gPM, gQM = Zygote.gradient(lossfn, Matrix(P), Matrix(Q))
+            @test gPM ≈ Matrix(gPH)
+            @test gQM ≈ Matrix(gQH)
+            @test gPM ≈ gPM'
+            @test gQM ≈ gQM'
+
+            # a nonsymmetric plain-Matrix input is symmetrized:
+            # same gradient as for a skew perturbation of the same symmetric part
+            A = randn(n, n)
+            Pskew = Matrix(P + 0.1 .* (A .- transpose(A)))
+            Qskew = Matrix(Q + 0.1 .* (A .- transpose(A)))
+            gPMs, gQMs = Zygote.gradient(lossfn, Pskew, Qskew)
+            @test gPMs ≈ gPM
+            @test gQMs ≈ gQM
+
+            # finite-difference check of the gradients
+            for _ in 1 : 3
+                Hp = Hermitian(randn(n, n))
+                Hq = Hermitian(randn(n, n))
+                e = 1e-6
+                dd_fd = (lossfn(P + e*Hp, Q + e*Hq) - lossfn(P - e*Hp, Q - e*Hq)) / (2e)
+                dd_ad = sum(Matrix(gPH) .* Hp) + sum(Matrix(gQH) .* Hq)
+                @test dd_ad ≈ dd_fd rtol=1e-5 atol=1e-7
+            end
+        end
+    end
+end;

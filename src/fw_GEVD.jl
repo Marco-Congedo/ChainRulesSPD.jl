@@ -22,17 +22,18 @@
 #   from paper: 
 #   Congedo M, Bhatia R, Bouchard F (2026)
 #   A new look at the Riemannian manifold of positive definite matrices
+#   Transactions on Machine Learning Research
 #
 #   These routines are the forward operators corresponding to the custom
 #   back-propagation rules implemented in bw_GEVD.jl.
 #
-#   They allow the most efficient possible way to compute:
+#   They allow the most efficient way to compute:
 #   - The geodesic (including the geometric mean)
 #   - The logarithmic map
 #   - The exponential map
 #   - The parallel transport
 #
-#   Copyright Marco Congedo, DR, PhD, CNRS (Grenoble) September 2026
+#   Copyright Marco Congedo, DR, PhD, CNRS (Grenoble) 2026
 # ========================================================================================================
 
 # NB: All functions are cached. Only phir, psir and gevdr don't do any caching. 
@@ -67,8 +68,9 @@ If `precond` = true, the input matrices P and Q are pre-conditioned by congruenc
     This bounds D'PD's diagonal to all-ones before Cholesky ever sees it, shrinking the condition number
     of the Cholesky factor. This can improve the accuracy.
 
-NB. In input matrices are not Hermitian or Symmetric they are typecasted to Hermitian
-because in all pullback functions it is assumed so (see the use of desym there)    
+NB. Input matrices that are not Hermitian or Symmetric are symmetrized as
+Hermitian((X+X')/2), so the decomposition (and the gradient) depends on both triangles
+(see also the EVD wrappers in fw_EVD.jl).
 =#
 @inline function gevdr(
         P::AbstractMatrix{T},
@@ -77,8 +79,10 @@ because in all pullback functions it is assumed so (see the use of desym there)
         precond::Bool = false
     ) where {T<:AbstractFloat}
 
-    Psym = P isa SymOrHerm ? P : Hermitian(P)
-    Qsym = Q isa SymOrHerm ? Q : Hermitian(Q)
+    # Symmetric/Hermitian inputs are used as-is; a plain Matrix is symmetrized
+    # so the result (and the gradient) depends on both triangles of P and Q.
+    Psym = P isa SymOrHerm ? P : Hermitian((P + P') / T(2))
+    Qsym = Q isa SymOrHerm ? Q : Hermitian((Q + Q') / T(2))
 
     if precond       
         D = inv(sqrt(Diagonal(Psym)))
@@ -107,10 +111,10 @@ return
 
 Version of gevdr suitable for the phi function.
 It should not be used for the psi function, as it engenders a 10dB loss of accuracy.
-Computes A as B' * Symmetric(Pcopy) (efficient computation of A)
+Computes A as B' * Psym, where Psym is the (symmetrized) P on which the GEVD was computed.
 
-NB. If input matrices are not Hermitian or Symmetric, they are typecasted to Hermitian
-because in all pullback functions it is assumed so (see the use of desym there)
+NB. If input matrices are not Hermitian or Symmetric, they are symmetrized as
+Hermitian((X+X')/2), so the decomposition (and the gradient) depends on both triangles.
 =#
 function gevdr_phir(
         P::AbstractMatrix{T},
@@ -120,8 +124,12 @@ function gevdr_phir(
     ) where {T<:AbstractFloat}
 
     λ, B = gevdr(P, Q; precond)
-#    A = B' * Symmetric(copy(P)) # this is the efficient fix
-    A = B' * Symmetric(P) # this is the efficient fix
+    # `A = B' * Symmetric(P)` would read only the upper triangle of a plain Matrix P,
+    # making the ϕ-map (and its gradient) depend on P's upper triangle only. Use the
+    # same symmetrized P on which the GEVD was computed instead, so the result and
+    # the gradient depend on both triangles (same convention as the EVD wrappers).
+    Psym = P isa SymOrHerm ? P : Hermitian((P + P') / T(2))
+    A = B' * Psym
     return λ, A, B
 end
 
@@ -171,7 +179,7 @@ based on the generalized eigendecomposition (GEVD) of the pair ``(P, Q)``, yield
 ``\\varphi(f, P, Q)=A^T f(\\Lambda) A``.
 
 The ``\\varphi`` function allows to compute the geodesic, which includes the geometric mean, as well as the logarithmic and exponential map.
-(See paper xxx).
+(See [paper](@ref reference)).
 
 !!! tip "Use wrappers"
     This function is rarely needed; for usual choices of ``f`` use wrappers:
@@ -472,7 +480,7 @@ based on the generalized eigendecomposition (GEVD) of the pair ``(P, Q)``, yield
 ``\\psi(f, P, Q)=B T f(\\Lambda) A``.
 
 The ``\\psi`` function allows to compute the parallel transport
-(See paper xxx).
+(See [paper](@ref reference)).
 
 !!! tip "Use wrapper"
     This function is rarely needed; for the parallel transport use [`parallel_transportr`](@ref).      
@@ -528,6 +536,7 @@ function psir(
     ) where {T<:AbstractFloat}
 
     λ, A, B = gevdr_psir(P, Q; precond)
+
     return B * Diagonal(f.(λ)) * A # can xe use (B * Diagonal(f.(λ)) / B ?
 end
 
@@ -608,5 +617,6 @@ function parallel_transportr(
     ) where {T<:AbstractFloat}
 
     E = psir(P, Q, Sqrt(); f′=Sqrt′(), precond)
+
     return sym(E' * S * E)
 end

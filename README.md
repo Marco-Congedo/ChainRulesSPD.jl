@@ -7,7 +7,10 @@
 
 
 <a href="https://Marco-Congedo.github.io/ChainRulesSPD.jl/dev">
-  <img src="https://img.shields.io/badge/docs-dev-blue.svg" alt="Documentation: stable" width="141">
+  <img src="https://img.shields.io/badge/docs-dev-blue.svg" alt="Documentation: stable" width="120">
+</a>
+<a href="https://codecov.io/gh/Marco-Congedo/ChainRulesSPD.jl">
+  <img src="https://codecov.io/gh/Marco-Congedo/ChainRulesSPD.jl/branch/master/graph/badge.svg" alt="Codecov coverage">
 </a>
 
 ---
